@@ -467,7 +467,6 @@ class CMFDublinCoreHTMLFormatter(object):
 
     def __call__(self):
         i = self.item
-        import pdb; pdb.set_trace()
         type = i.Type()
         if type == 'Event':
             strTime = i.start().strftime("<p class='documentByLine'>Wanneer: %d-%m-%Y om %H:%M</p>")
