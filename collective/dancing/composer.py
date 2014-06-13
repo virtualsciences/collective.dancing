@@ -456,6 +456,7 @@ class CMFDublinCoreHTMLFormatter(object):
     template = """\
     <div>
       <h2><a href="%(url)s">%(title)s</a></h2>
+      %(time)s
       <p>%(description)s</p>
     </div>
     """
@@ -466,8 +467,14 @@ class CMFDublinCoreHTMLFormatter(object):
 
     def __call__(self):
         i = self.item
+        import pdb; pdb.set_trace()
+        type = i.Type()
+        if type == 'Event':
+            strTime = i.start().strftime("<p class='documentByLine'>Wanneer: %d-%m-%Y om %H:%M</p>")
+        else:
+            strTime = ''
         return self.template % dict(
-            url=i.absolute_url(), title=i.Title(), description=i.Description())
+            url=i.absolute_url(), title=i.Title(), description=i.Description(), time=strTime)
 
 class PloneCallHTMLFormatter(object):
     """Assumes that item is callable and returns an HTML
