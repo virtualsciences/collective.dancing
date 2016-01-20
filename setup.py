@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
 
 import os
 
@@ -8,7 +9,7 @@ def read(*paths):
     return open(os.path.join(os.path.dirname(__file__), *paths)).read()
 
 
-version = '1.0dev'
+version = '1.0.3.dev0'
 
 setup(name='collective.dancing',
       version=version,
@@ -31,6 +32,9 @@ setup(name='collective.dancing',
       author='Daniel Nouri, Thomas Clement Mogensen and contributors',
       author_email='singing-dancing@googlegroups.com',
       url='http://plone.org/products/dancing',
+      download_url="""
+      https://github.com/collective/collective.dancing/tarball/1.0.2
+      """,
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],

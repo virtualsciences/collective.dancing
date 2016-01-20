@@ -1,8 +1,34 @@
 Changelog
 =========
 
-1.0dev (Unreleased)
--------------------
+1.0.3 (unreleased)
+------------------
+
+1.0.2 (2015-11-03)
+------------------
+
+- Fix readme file.
+  [ivanteoh]
+
+1.0.1 (2015-11-03)
+------------------
+
+- Fix html generation in `preview.pt`. Now it generates only 1 <body> tag.
+  This was a problem with plone.protect's transform.
+  [cekk]
+
+- Allow to confirm a subscription for multiple channels (fixes #8)
+  [fRiSi]
+
+- Disable diazo for `@@preview-newsletter.html`
+  [fRiSi]
+
+- Disable CSRF protection on `tick_and_dispatch` request (fixes #24)
+  [ivanteoh]
+
+
+1.0 (2015-05-11)
+----------------
 
 - Don't try to patch ATTopic if ``plone.app.collection`` is available.
   [saily]
@@ -66,6 +92,24 @@ Changelog
 
 - Added two new events, raised when an user confirm or remove his subscription.
   [cekk]
+
+- Fix Italian translations [cekk]
+
+- Added content rules to allow automated sending of content as a newsletter.
+  [djay]
+
+- Configure content rule to send as newsletter or send as link and summary only.
+  [djay]
+
+- "Send as Newsletter" can now be sent to an optionally subscribed section rather
+  than the whole channel.
+  [arterrey]
+
+- Import / export CSV file includes section values, and backward compatible with original format.
+  [ivanteoh]
+
+- External subscriber database and sign up form support.
+  [ivanteoh]
 
 0.9.10 (2012-02-25)
 -------------------

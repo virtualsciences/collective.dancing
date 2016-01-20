@@ -8,8 +8,10 @@ import re
 import os
 import string
 import tempfile
+import traceback
 from email.Utils import formataddr
 from email.Header import Header
+from email.Message import Message
 
 from BeautifulSoup import BeautifulSoup
 
@@ -287,15 +289,18 @@ class HTMLComposer(persistent.Persistent):
         site = component.getUtility(Products.CMFPlone.interfaces.IPloneSiteRoot)
         site = utils.fix_request(site, 0)
         secret_var = '$%s' % template_var('secret')
-        vars['confirm_url'] = (
-            '%s/confirm-subscription.html?secret=%s' %
-            (site.portal_newsletters.absolute_url(), secret_var))
-        vars['unsubscribe_url'] = (
-            '%s/unsubscribe.html?secret=%s' %
-            (channel.absolute_url(), secret_var))
-        vars['my_subscriptions_url'] = (
-            '%s/../../my-subscriptions.html?secret=%s' %
-            (channel.absolute_url(), secret_var))
+        vars['confirm_url'] = \
+            subscription.composer_data.get("composer_url") or \
+            ('%s/confirm-subscription.html?secret=%s' % (
+                site.portal_newsletters.absolute_url(), secret_var))
+        vars['unsubscribe_url'] = \
+            subscription.composer_data.get("unsubscribe_url") or \
+            ('%s/unsubscribe.html?secret=%s' %
+                (channel.absolute_url(), secret_var))
+        vars['my_subscriptions_url'] = \
+            subscription.composer_data.get("my_subscriptions_url") or \
+            ('%s/../../my-subscriptions.html?secret=%s' %
+                (channel.absolute_url(), secret_var))
         vars['to_addr'] = '$%s' % template_var('to_addr')
         return vars
 
@@ -580,3 +585,23 @@ def at_exit():
         "StubSMTPMailer shutting down, sent %s messages to %s recipients.\n" %
         (StubSMTPMailer.sent, len(StubSMTPMailer.recipients)))
     StubSMTPMailer.logfile.close()
+
+
+class Dispatch(collective.singing.mail.Dispatch):
+    """An IDispatcher registered for ``email.message.Message`` that'll
+    send e-mails using the default Plone MailHost. """
+    interface.implements(collective.singing.interfaces.IDispatch)
+    component.adapts(Message)
+
+    def __call__(self):
+        msg = self.message
+        delivery = component.getUtility(
+            Products.CMFPlone.interfaces.IPloneSiteRoot).MailHost
+        try:
+            delivery.send(msg.as_string(), mfrom=msg['From'],
+                mto=self._split(msg['To']))
+        except Exception, e:
+            # TODO: log
+            return u'error', traceback.format_exc(e)
+        else:
+            return u'sent', None
